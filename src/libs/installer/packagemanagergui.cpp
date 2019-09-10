@@ -630,6 +630,8 @@ bool PackageManagerGui::event(QEvent *event)
 /*!
     \reimp
 */
+#include <QWindow>
+#include <QScreen>
 void PackageManagerGui::showEvent(QShowEvent *event)
 {
     if (!event->spontaneous()) {
@@ -643,11 +645,12 @@ void PackageManagerGui::showEvent(QShowEvent *event)
                 }
             }
         }
-        setMinimumSize(size());
-        if (minimumWidth() < m_core->settings().wizardDefaultWidth())
-            resize(m_core->settings().wizardDefaultWidth(), height());
-        if (minimumHeight() < m_core->settings().wizardDefaultHeight())
-            resize(width(), m_core->settings().wizardDefaultHeight());
+        QRect geometry = windowHandle()->screen()->geometry();
+        int width = geometry.width() / 3;
+        int height = int(geometry.height() / 2.5);
+
+        setMinimumSize(width, height);
+        setMaximumSize(width, height);
     }
     QWizard::showEvent(event);
     QMetaObject::invokeMethod(this, "dependsOnLocalInstallerBinary", Qt::QueuedConnection);
